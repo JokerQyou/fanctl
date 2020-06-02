@@ -50,7 +50,7 @@ Choose any GND / VCC (5V) pin to supply power. For the controller pin, use [GPIO
 - To verify you have correctly installed the service, run `sudo systemctl status fanctl`, it should print some information about this tool
 - To start the service: `sudo systemctl start fanctl`
 
-When the chip temperature reaches 60°C, the fan will be started by pulling `FAN_VCC_PIN` to high (resulting the transistor to close). When the chip temperature drops to 45°C or below, the fan will be stopped by pulling `FAN_VCC_PIN` to low.
+When the chip temperature reaches 60°C, the fan will be started by pulling `FAN_VCC_PIN` to high (causing the transistor to close). When the chip temperature drops to 45°C or below, the fan will be stopped by pulling `FAN_VCC_PIN` to low. When the fan is started or stopped, the corresponding temperature value will be written to journald logs, to follow the log: `sudo journalctl -u fanctl -f`.
 
 ## Configure
 
@@ -60,4 +60,4 @@ To set the temperature thresholds, modify `THRESHOLD_ON` and `THRESHOLD_OFF` in 
 
 ## Why C
 
-Well, I've actually written a Python script and installed that as a service, it kept working for almost 6 months. It's just I don't think such a simple job is worth using 15MB of memory. The memory footprint dropped under 400KB after transforming to C.
+Well, I've actually written a Python script and installed that as a service, it kept working for almost 6 months. But I don't think such a simple job is worth using 15MB of memory. The memory footprint dropped under 400KB after transforming to C.
