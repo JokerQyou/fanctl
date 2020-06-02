@@ -62,6 +62,9 @@ void signal_handler(int signum)
 
 int main( int argc, char **argv )
 {
+	setlinebuf(stdout);
+	setlinebuf(stderr);
+
 	mraa_gpio_context fan_vcc;
 
 	signal(SIGINT, signal_handler);
