@@ -28,6 +28,7 @@ This file is based on the skeleton of https://git.io/JfiMl , AKA the source of `
 */
 
 /* ---- Include Files ---------------------------------------------------- */
+#define _GNU_SOURCE
 
 #include <signal.h>
 #include <stdio.h>
@@ -46,7 +47,7 @@ This file is based on the skeleton of https://git.io/JfiMl , AKA the source of `
 #define THRESHOLD_ON  60
 #define THRESHOLD_OFF 45
 // Fan starts if FAN_VCC_PIN is high, stops if it's low.
-#define FAN_VCC_PIN    8  // FIXME
+#define FAN_VCC_PIN    8
 #define SLEEP_INTERVAL 5
 
 // The program stops once flag is set to 0.
@@ -66,6 +67,45 @@ int main( int argc, char **argv )
 	setlinebuf(stderr);
 
 	mraa_gpio_context fan_vcc;
+	float threshold_on;
+	float threshold_off;
+	char* env_threshold_on;
+	char* env_threshold_off;
+
+	env_threshold_on = secure_getenv("THRESHOLD_ON");
+	if (env_threshold_on == NULL)
+	{
+		threshold_on = THRESHOLD_ON;
+	}
+	else
+	{
+		threshold_on = atof(env_threshold_on);
+		if (threshold_on == 0)
+		{
+			threshold_on = THRESHOLD_ON;
+		}
+		printf("Got threshold_on from env: %f\n", threshold_on);
+	}
+	env_threshold_off = secure_getenv("THRESHOLD_OFF");
+	if (env_threshold_off == NULL)
+	{
+		threshold_off = THRESHOLD_OFF;
+	}
+	else
+	{
+		threshold_off = atof(env_threshold_off);
+		if (threshold_off == 0)
+		{
+			threshold_off = THRESHOLD_OFF;
+		}
+		printf("Got threshold_off from env: %f\n", threshold_off);
+	}
+
+	if (threshold_off >= threshold_on)
+	{
+		fprintf(stderr, "THRESHOLD_ON must be greater than THRESHOLD_OFF");
+		return EXIT_FAILURE;
+	}
 
 	signal(SIGINT, signal_handler);
 
@@ -154,8 +194,7 @@ int main( int argc, char **argv )
 				}
 
 				// Turn on the fan
-				// FIXME
-				if (temperature >= THRESHOLD_ON && fan_on == 0)
+				if (temperature >= threshold_on && fan_on == 0)
 				{
 					fprintf (stdout, "temp=%2.2f°C, fan start\n", temperature);
 					if (mraa_gpio_write(fan_vcc, 1) != MRAA_SUCCESS)
@@ -164,7 +203,7 @@ int main( int argc, char **argv )
 					}
 				}
 				// Turn off the fan
-				if (temperature <= THRESHOLD_OFF && fan_on == 1)
+				if (temperature <= threshold_off && fan_on == 1)
 				{
 					fprintf (stdout, "temp=%2.2f°C, fan stop\n", temperature);
 					if (mraa_gpio_write(fan_vcc, 0) != MRAA_SUCCESS)
