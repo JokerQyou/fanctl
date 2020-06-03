@@ -54,9 +54,23 @@ When the chip temperature reaches 60°C, the fan will be started by pulling `FAN
 
 ## Configure
 
-There is currently no configuration available.
+Edit the installed service file (in `/etc/systemd/system`), use `THRESHOLD_ON` and `THRESHOLD_OFF` to set temperature limits. ON is the upper limit, fan starts when chip temperature reaches above it; OFF is the lower limit, fan stops when chip temperature drops below it.
 
-To set the temperature thresholds, modify `THRESHOLD_ON` and `THRESHOLD_OFF` in `fanctl.c`. To use a different pin for controlling the fan, modify `FAN_VCC_PIN` (Notice: MRAA library uses the **physical pin number**). Then rebuild and reinstall again. Service will need to be restarted.
+```systemd service
+[Service]
+# ...
+Environment=THRESHOLD_ON=50
+Environment=THRESHOLD_OFF=30
+```
+
+You'll need to reload the daemon before restarting the service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart fanctl
+```
+
+To use a different pin for controlling the fan, modify `FAN_VCC_PIN` (Notice: MRAA library uses the **physical pin number**). Then rebuild and reinstall again. Service will need to be restarted.
 
 ## Why C
 
