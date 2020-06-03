@@ -84,7 +84,7 @@ int main( int argc, char **argv )
 		{
 			threshold_on = THRESHOLD_ON;
 		}
-		printf("Got threshold_on from env: %f\n", threshold_on);
+		printf("Got threshold_on from env: %2.2f\n", threshold_on);
 	}
 	env_threshold_off = secure_getenv("THRESHOLD_OFF");
 	if (env_threshold_off == NULL)
@@ -98,7 +98,7 @@ int main( int argc, char **argv )
 		{
 			threshold_off = THRESHOLD_OFF;
 		}
-		printf("Got threshold_off from env: %f\n", threshold_off);
+		printf("Got threshold_off from env: %2.2f\n", threshold_off);
 	}
 
 	if (threshold_off >= threshold_on)
