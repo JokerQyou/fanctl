@@ -2,6 +2,8 @@
 
 A simple thermal fan controller for Raspbian.
 
+[中文文档](https://blog.mynook.info/post/rpi-gpio-thermal-fan/)
+
 # Hardware
 
 ## Required parts
